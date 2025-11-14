@@ -15,7 +15,7 @@ let gameOver = false;
 // ---------------------
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
-const resetBtn = document.getElementById('resetBtn');
+const resetBtn = document.getElementById('resetBtn'); // matches HTML
 const difficultySlider = document.getElementById('difficulty');
 const difficultyValue = document.getElementById('difficultyValue');
 
@@ -30,129 +30,129 @@ const symbols = {
 // ---------------------
 // Initialize Board
 // ---------------------
-function initBoard() { // {1
+function initBoard() {
     board = Array(8).fill(null).map(() => Array(8).fill(null));
 
     // Pawns
-    for (let i = 0; i < 8; i++) { // {2
+    for (let i = 0; i < 8; i++) {
         board[1][i] = { type: 'pawn', color: 'b', hasMoved: false };
         board[6][i] = { type: 'pawn', color: 'w', hasMoved: false };
-    } // }2
+    }
 
     // Other pieces
     const order = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
-    for (let i = 0; i < 8; i++) { // {3
+    for (let i = 0; i < 8; i++) {
         board[0][i] = { type: order[i], color: 'b', hasMoved: false };
         board[7][i] = { type: order[i], color: 'w', hasMoved: false };
-    } // }3
-} // }1
+    }
+}
 
 // ---------------------
 // Render Board
 // ---------------------
-function renderBoard() { // {4
+function renderBoard() {
     boardEl.innerHTML = '';
-    for (let r = 0; r < 8; r++) { // {5
-        for (let c = 0; c < 8; c++) { // {6
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
             const square = document.createElement('div');
             square.className = 'square ' + ((r+c)%2 === 0 ? 'white' : 'black');
             square.dataset.row = r;
             square.dataset.col = c;
 
             const piece = board[r][c];
-            if (piece) { // {7
+            if (piece) {
                 const el = document.createElement('div');
                 el.className = 'piece';
                 el.textContent = symbols[piece.color][piece.type];
                 square.appendChild(el);
-            } // }7
+            }
 
-            if (selectedPiece && selectedPiece.row === r && selectedPiece.col === c) { // {8
+            if (selectedPiece && selectedPiece.row === r && selectedPiece.col === c) {
                 square.classList.add('selected');
-            } // }8
+            }
 
-            const handleInteraction = (e) => { // {9
+            const handleInteraction = (e) => {
                 if(e.type === 'touchend') e.preventDefault();
                 handleClick(r, c);
-            } // }9
+            }
 
             square.addEventListener('click', handleInteraction);
             square.addEventListener('touchend', handleInteraction, { passive: false });
 
             boardEl.appendChild(square);
-        } // }6
-    } // }5
-} // }4
+        }
+    }
+}
 
 // ---------------------
 // Update Status
 // ---------------------
-function updateStatus(msg) { // {10
+function updateStatus(msg) {
     statusEl.textContent = msg || (gameOver ? "Game Over" : "Your Turn (White)");
-} // }10
+}
 
 // ---------------------
 // Handle Click
 // ---------------------
-function handleClick(r, c) { // {11
+function handleClick(r, c) {
     if (gameOver) return;
     const piece = board[r][c];
 
     // Select white piece
-    if (piece && piece.color === 'w') { // {12
+    if (piece && piece.color === 'w') {
         selectedPiece = { row: r, col: c };
         renderBoard();
         highlightMoves(selectedPiece);
         return;
-    } // }12
+    }
 
     // Move selected piece
-    if (selectedPiece) { // {13
+    if (selectedPiece) {
         const moves = getLegalMoves(selectedPiece.row, selectedPiece.col);
-        if (moves.some(m => m[0] === r && m[1] === c)) { // {14
+        if (moves.some(m => m[0] === r && m[1] === c)) {
             makeMove(selectedPiece.row, selectedPiece.col, r, c);
             selectedPiece = null;
             renderBoard();
 
             // AI move
             setTimeout(aiMove, 300);
-        } // }14
-    } // }13
-} // }11
+        }
+    }
+}
 
 // ---------------------
 // Highlight Moves
 // ---------------------
-function highlightMoves(sel) { // {15
+function highlightMoves(sel) {
     const moves = getLegalMoves(sel.row, sel.col);
-    moves.forEach(([r, c]) => { // {16
+    moves.forEach(([r, c]) => {
         const sq = boardEl.querySelector(`.square[data-row='${r}'][data-col='${c}']`);
         if (sq) sq.classList.add('possible-move');
-    }); // }16
-} // }15
+    });
+}
 
 // ---------------------
 // Make Move
 // ---------------------
-function makeMove(sr, sc, dr, dc) { // {17
+function makeMove(sr, sc, dr, dc) {
     const piece = board[sr][sc];
     // Pawn promotion
     if (piece.type === 'pawn' && (dr === 0 || dr === 7)) piece.type = 'queen';
     piece.hasMoved = true;
     board[dr][dc] = piece;
     board[sr][sc] = null;
-} // }17
+}
 
 // ---------------------
 // Get Legal Moves
 // ---------------------
-function getLegalMoves(r, c) { // {18
+function getLegalMoves(r, c) {
     const piece = board[r][c];
     if (!piece) return [];
     const moves = [];
     const dir = piece.color === 'w' ? -1 : 1;
 
-    switch(piece.type) { // {19
+    switch(piece.type) {
         case 'pawn':
             if (!board[r+dir]?.[c]) moves.push([r+dir, c]);
             if ((r === 6 && piece.color === 'w') || (r === 1 && piece.color === 'b')) {
@@ -178,11 +178,11 @@ function getLegalMoves(r, c) { // {18
                     moves.push([nr,nc]);
             });
             break;
-    } // }19
+    }
     return moves;
-} // }18
+}
 
-function addLine(r,c,directions,piece,moves){ // {20
+function addLine(r,c,directions,piece,moves){
     directions.forEach(([dr,dc])=>{
         let nr=r+dr,nc=c+dc;
         while(nr>=0&&nr<8&&nc>=0&&nc<8){
@@ -194,12 +194,12 @@ function addLine(r,c,directions,piece,moves){ // {20
             nr+=dr; nc+=dc;
         }
     });
-} // }20
+}
 
 // ---------------------
 // AI Move
 // ---------------------
-function aiMove() { // {21
+function aiMove() {
     const moves = [];
     for(let r=0;r<8;r++){
         for(let c=0;c<8;c++){
@@ -225,22 +225,22 @@ function aiMove() { // {21
     const move = moves[0];
     makeMove(move.sr, move.sc, move.dr, move.dc);
     renderBoard();
-} // }21
+}
 
 // ---------------------
 // Event Listeners
 // ---------------------
-resetBtn.addEventListener('click', () => { // {22
+resetBtn.addEventListener('click', () => {
     initBoard();
     selectedPiece=null;
     gameOver=false;
     renderBoard();
     updateStatus();
-}); // }22
+});
 
-difficultySlider.addEventListener('input', () => { // {23
+difficultySlider.addEventListener('input', () => {
     difficultyValue.textContent = difficultySlider.value;
-}); // }23
+});
 
 // ---------------------
 // Start Game
@@ -248,3 +248,4 @@ difficultySlider.addEventListener('input', () => { // {23
 initBoard();
 renderBoard();
 updateStatus();
+
