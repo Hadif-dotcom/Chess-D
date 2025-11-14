@@ -7,14 +7,14 @@ let currentPlayer = 'white';
 let gameOver = false;
 let isFirstMove = true;
 
-// DOM elements
-const boardElement = document.getElementById('board');
-const statusElement = document.getElementById('status');
-const whiteScoreElement = document.getElementById('white-score');
-const blackScoreElement = document.getElementById('black-score');
-const resetBtn = document.getElementById('reset-btn');
-const difficultySlider = document.getElementById('difficulty');
-const difficultyValue = document.getElementById('difficultyValue');
+// DOM elements (we'll query them after DOM is ready)
+let boardElement;
+let statusElement;
+let whiteScoreElement;
+let blackScoreElement;
+let resetBtn;
+let difficultySlider;
+let difficultyValue;
 
 // Create initial chess board
 function createInitialBoard() {
@@ -38,6 +38,8 @@ function createInitialBoard() {
 
 // Render the board
 function renderBoard() {
+    if (!boardElement) return;
+
     boardElement.innerHTML = '';
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
@@ -70,19 +72,16 @@ function renderBoard() {
     updateStatus();
 }
 
-// Event listeners
-resetBtn.addEventListener('click', resetGame);
-difficultySlider.addEventListener('input', () => {
-    difficultyValue.textContent = difficultySlider.value;
-});
+// Update status
+function updateStatus() {
+    if (!statusElement) return;
 
-// Initialize game
-function initGame() {
-    gameState = createInitialBoard();
-    currentPlayer = 'white';
-    isFirstMove = true;
-    renderBoard();
-    updateStatus();
+    if (isGameOver()) {
+        const winner = currentPlayer === 'white' ? 'Black' : 'White';
+        statusElement.textContent = isKingInCheck(currentPlayer) ? `Checkmate! ${winner} wins!` : 'Stalemate!';
+    } else {
+        statusElement.textContent = `${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}'s turn`;
+    }
 }
 
 // Clear selection
@@ -98,16 +97,6 @@ function getPieceSymbol(piece) {
     return piece.color === 'black' ? black[piece.type] : white[piece.type];
 }
 
-// Update status
-function updateStatus() {
-    if (isGameOver()) {
-        const winner = currentPlayer === 'white' ? 'Black' : 'White';
-        statusElement.textContent = isKingInCheck(currentPlayer) ? `Checkmate! ${winner} wins!` : 'Stalemate!';
-    } else {
-        statusElement.textContent = `${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}'s turn`;
-    }
-}
-
 // Reset game
 function resetGame() {
     gameState = createInitialBoard();
@@ -116,8 +105,32 @@ function resetGame() {
     clearSelection();
     renderBoard();
     updateStatus();
+
     const diffContainer = document.querySelector('.difficulty-container');
     if (diffContainer) diffContainer.classList.remove('hidden');
+}
+
+// Initialize game
+function initGame() {
+    gameState = createInitialBoard();
+    currentPlayer = 'white';
+    isFirstMove = true;
+    renderBoard();
+    updateStatus();
+}
+
+// Dummy placeholders for missing functions
+function handleSquareClick(row, col) {
+    // Placeholder: implement your move logic here
+    console.log(`Clicked square ${row},${col}`);
+}
+function isGameOver() {
+    // Placeholder: implement your checkmate/stalemate logic
+    return false;
+}
+function isKingInCheck(player) {
+    // Placeholder: implement check detection
+    return false;
 }
 
 // Prevent mobile zoom / pull-to-refresh
@@ -134,7 +147,25 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
-// Initialize on DOM ready
+// Initialize after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Query DOM elements safely
+    boardElement = document.getElementById('board');
+    statusElement = document.getElementById('status');
+    whiteScoreElement = document.getElementById('white-score');
+    blackScoreElement = document.getElementById('black-score');
+    resetBtn = document.getElementById('reset-btn');
+    difficultySlider = document.getElementById('difficulty');
+    difficultyValue = document.getElementById('difficultyValue');
+
+    // Event listeners with null checks
+    if (resetBtn) resetBtn.addEventListener('click', resetGame);
+    if (difficultySlider && difficultyValue) {
+        difficultySlider.addEventListener('input', () => {
+            difficultyValue.textContent = difficultySlider.value;
+        });
+    }
+
+    // Start the game
     initGame();
 });
