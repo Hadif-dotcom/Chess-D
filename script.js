@@ -1,13 +1,16 @@
 // script.js
 
-// Game state
+// ---------------------
+// Game State
+// ---------------------
 let gameState = [];
 let selectedPiece = null;
 let currentPlayer = 'white';
-let gameOver = false;
 let isFirstMove = true;
 
-// DOM elements (we'll query them after DOM is ready)
+// ---------------------
+// DOM Elements
+// ---------------------
 let boardElement;
 let statusElement;
 let whiteScoreElement;
@@ -16,7 +19,9 @@ let resetBtn;
 let difficultySlider;
 let difficultyValue;
 
-// Create initial chess board
+// ---------------------
+// Create Initial Board
+// ---------------------
 function createInitialBoard() {
     const board = Array(8).fill().map(() => Array(8).fill(null));
 
@@ -36,11 +41,14 @@ function createInitialBoard() {
     return board;
 }
 
-// Render the board
+// ---------------------
+// Render Board
+// ---------------------
 function renderBoard() {
     if (!boardElement) return;
 
     boardElement.innerHTML = '';
+
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
             const square = document.createElement('div');
@@ -57,6 +65,7 @@ function renderBoard() {
                 square.appendChild(pieceEl);
             }
 
+            // Add click/touch listeners
             const handleInteraction = (e) => {
                 e.preventDefault();
                 handleSquareClick(row, col);
@@ -69,10 +78,13 @@ function renderBoard() {
             boardElement.appendChild(square);
         }
     }
+
     updateStatus();
 }
 
-// Update status
+// ---------------------
+// Update Status
+// ---------------------
 function updateStatus() {
     if (!statusElement) return;
 
@@ -84,20 +96,26 @@ function updateStatus() {
     }
 }
 
-// Clear selection
+// ---------------------
+// Clear Selection
+// ---------------------
 function clearSelection() {
     document.querySelectorAll('.square').forEach(sq => sq.classList.remove('selected', 'possible-move'));
     selectedPiece = null;
 }
 
-// Get piece symbol
+// ---------------------
+// Piece Symbols
+// ---------------------
 function getPieceSymbol(piece) {
     const black = { king: '♚', queen: '♛', rook: '♜', bishop: '♝', knight: '♞', pawn: '♟️' };
     const white = { king: '♔', queen: '♕', rook: '♖', bishop: '♗', knight: '♘', pawn: '♙' };
     return piece.color === 'black' ? black[piece.type] : white[piece.type];
 }
 
-// Reset game
+// ---------------------
+// Reset Game
+// ---------------------
 function resetGame() {
     gameState = createInitialBoard();
     currentPlayer = 'white';
@@ -110,30 +128,66 @@ function resetGame() {
     if (diffContainer) diffContainer.classList.remove('hidden');
 }
 
-// Initialize game
-function initGame() {
-    gameState = createInitialBoard();
-    currentPlayer = 'white';
-    isFirstMove = true;
-    renderBoard();
-    updateStatus();
+// ---------------------
+// Handle Square Click
+// ---------------------
+function handleSquareClick(row, col) {
+    const piece = gameState[row][col];
+
+    // Select piece
+    if (piece && piece.color === currentPlayer) {
+        clearSelection();
+        selectedPiece = { row, col, piece };
+        highlightSelected(row, col);
+        return;
+    }
+
+    // Move piece if a piece is selected
+    if (selectedPiece) {
+        const from = selectedPiece;
+        // Simple move logic (replace with your full rules)
+        gameState[row][col] = from.piece;
+        gameState[from.row][from.col] = null;
+        clearSelection();
+        selectedPiece = null;
+
+        // Switch player
+        currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+        renderBoard();
+    }
 }
 
-// Dummy placeholders for missing functions
-function handleSquareClick(row, col) {
-    // Placeholder: implement your move logic here
-    console.log(`Clicked square ${row},${col}`);
+// Highlight selected piece
+function highlightSelected(row, col) {
+    const square = document.querySelector(`.square[data-row='${row}'][data-col='${col}']`);
+    if (square) square.classList.add('selected');
 }
+
+// ---------------------
+// Game Logic Placeholders
+// ---------------------
 function isGameOver() {
-    // Placeholder: implement your checkmate/stalemate logic
+    // Placeholder for real check/checkmate/stalemate logic
     return false;
 }
 function isKingInCheck(player) {
-    // Placeholder: implement check detection
+    // Placeholder for real check logic
     return false;
 }
 
-// Prevent mobile zoom / pull-to-refresh
+// ---------------------
+// Responsive Board
+// ---------------------
+function resizeBoard() {
+    if (!boardElement) return;
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.9; // 90% of smaller dimension
+    boardElement.style.width = size + 'px';
+    boardElement.style.height = size + 'px';
+}
+
+// ---------------------
+// Mobile Touch Fix
+// ---------------------
 window.addEventListener('touchmove', (e) => {
     if (e.touches.length > 1 || e.target.classList.contains('square') || e.target.closest('.square')) {
         e.preventDefault();
@@ -147,7 +201,9 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
-// Initialize after DOM is ready
+// ---------------------
+// DOM Ready Initialization
+// ---------------------
 document.addEventListener('DOMContentLoaded', () => {
     // Query DOM elements safely
     boardElement = document.getElementById('board');
@@ -166,6 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Start the game
-    initGame();
+    // Responsive board
+    resizeBoard();
+    window.addEventListener('resize', resizeBoard);
+
+    // Start game
+    resetGame();
 });
+
