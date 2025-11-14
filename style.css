@@ -1,0 +1,387 @@
+/* Modern Chess UI Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Symbols:wght@400;700&display=swap');
+
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --bg-light: #f9fafb;
+    --bg-dark: #1f2937;
+    --white: #ffffff;
+    --light-square: #f0d9b5;
+    --dark-square: #b58863;
+    --highlight: rgba(79, 70, 229, 0.3);
+    --valid-move: rgba(34, 197, 94, 0.3);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --transition: all 0.2s ease-in-out;
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    margin: 0;
+    padding: 1rem;
+    padding-bottom: calc(1rem + var(--safe-area-inset-bottom));
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-primary);
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+.chess-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    height: 100%;
+    padding: 0.5rem;
+    margin: 0 auto;
+}
+
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1/1;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--bg-dark);
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.square {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(20px, 4.5vw, 42px);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: var(--transition);
+}
+
+.square::after {
+    content: '';
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background-color: var(--valid-move);
+    opacity: 0;
+    transform: scale(0);
+    transition: var(--transition);
+}
+
+.square.valid-move::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.square.white {
+    background-color: var(--light-square);
+    color: var(--text-primary);
+}
+
+.square.black {
+    background-color: var(--dark-square);
+    color: var(--white);
+}
+
+.square.selected {
+    background-color: var(--highlight);
+    box-shadow: inset 0 0 0 2px var(--primary-color);
+}
+
+.square.valid-move {
+    background-color: transparent;
+}
+
+.square.valid-move.capture::after {
+    width: 80%;
+    height: 80%;
+    background-color: transparent;
+    border: 3px solid var(--valid-move);
+    border-radius: 0;
+    transform: rotate(45deg);
+}
+
+.game-info {
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.difficulty-container {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+#resetBtn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 0.5rem;
+}
+
+#resetBtn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem;
+        padding-bottom: calc(0.5rem + var(--safe-area-inset-bottom));
+    }
+
+    .chess-container {
+        padding: 0.25rem;
+        height: auto;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        justify-content: flex-start;
+    }
+
+    .chess-board {
+        margin: 0.5rem 0;
+        max-height: 95vw;
+    }
+
+    .square {
+        font-size: clamp(16px, 5vw, 36px);
+    }
+
+    .game-info, .difficulty-container {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+    }
+
+    #resetBtn {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+    body {
+        padding: 0.5rem;
+    }
+
+    .chess-container {
+        flex-direction: row;
+        gap: 1rem;
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+
+    .chess-board {
+        max-height: 85vh;
+        max-width: 85vh;
+    }
+
+    .game-info {
+        margin: 0;
+        max-width: 200px;
+    }
+}
+
+/* Very small devices */
+@media (max-width: 360px) {
+    .square {
+        font-size: clamp(14px, 4.5vw, 32px);
+    }
+
+    .game-info, .difficulty-container {
+        font-size: 0.9rem;
+    }
+}
+
+/* Prevent text selection on pieces */
+.piece {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Add this to ensure the board stays within viewport on small screens */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0.5rem, env(safe-area-inset-left));
+        padding-right: max(0.5rem, env(safe-area-inset-right));
+    }
+}
+    margin: 0 auto;
+}
+
+#resetBtn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    -webkit-tap-highlight-color: transparent;
+    min-width: 120px;
+    margin: 0.5rem 0;
+    touch-action: manipulation;
+}
+
+#resetBtn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+#resetBtn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Difficulty slider styles */
+.difficulty-container {
+    margin: 0.75rem 0;
+    padding: 1rem;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.difficulty-container.hidden {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    border: none;
+}
+
+.difficulty-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+#difficultyValue {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.piece {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.piece:hover {
+    transform: scale(1.1);
+}
