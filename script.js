@@ -7,7 +7,7 @@
 // ---------------------
 let board = [];
 let selectedPiece = null;
-let currentPlayer = 'white';
+let currentPlayer = 'w'; // player is white
 let gameOver = false;
 
 // DOM Elements
@@ -66,7 +66,14 @@ function renderBoard() {
                 square.classList.add('selected');
             }
 
-            square.addEventListener('click', () => handleClick(r,c));
+            const handleInteraction = (e) => {
+                if(e.type === 'touchend') e.preventDefault(); // prevent mobile scrolling
+                handleClick(r,c);
+            };
+
+            square.addEventListener('click', handleInteraction);
+            square.addEventListener('touchend', handleInteraction, { passive: false });
+
             boardEl.appendChild(square);
         }
     }
@@ -221,11 +228,8 @@ function aiMove(){
         }
     }
     if(moves.length===0){
-        if(isCheckmate('b')){
-            updateStatus("You Win! Checkmate");
-        } else {
-            updateStatus("Stalemate");
-        }
+        if(isCheckmate('b')) updateStatus("You Win! Checkmate");
+        else updateStatus("Stalemate");
         gameOver=true;
         return;
     }
@@ -253,7 +257,6 @@ function aiMove(){
 // Check/Checkmate/Stalemate (simplified)
 // ---------------------
 function isCheckmate(color){
-    // Simplified: if no legal moves
     for(let r=0;r<8;r++){
         for(let c=0;c<8;c++){
             const piece = board[r][c];
@@ -265,7 +268,7 @@ function isCheckmate(color){
     return true;
 }
 function isStalemate(color){
-    return isCheckmate(color); // simplified
+    return isCheckmate(color);
 }
 
 // ---------------------
@@ -289,6 +292,3 @@ difficultySlider.addEventListener('input', ()=>{
 initBoard();
 renderBoard();
 updateStatus();
-me();
-});
-
